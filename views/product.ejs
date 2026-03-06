@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= product.name %> - Tienda Local</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .product-detail { border: 1px solid #ddd; padding: 20px; max-width: 400px; }
+        .product-detail img { max-width: 100%; height: auto; }
+    </style>
+</head>
+<body>
+    <h1><%= product.name %></h1>
+    <div class="product-detail">
+        <img src="<%= product.image %>" alt="<%= product.name %>">
+        <h2>Precio: $<%= product.price %></h2>
+        <p>Categoría: <%= product.category %></p>
+        <button onclick="addToCart(<%= product.id %>)">Añadir al carrito</button>
+    </div>
+    <br>
+    <a href="/">Volver al catálogo</a>
+
+    <script src="/script.js"></script>
+</body>
+</html>

@@ -3,20 +3,11 @@ version: '3.8'
 services:
   app:
     build: .
-    volumes:
-      - ./app:/var/www/html
-    networks:
-      - webnet
-
-  nginx:
-    image: nginx:alpine
     ports:
-      - "8080:80"
+      - "8080:3000"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./app:/var/www/html
-    depends_on:
-      - app
+      - .:/app
+      - /app/node_modules
     networks:
       - webnet
 

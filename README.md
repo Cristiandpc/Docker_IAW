@@ -99,14 +99,16 @@ Este diagrama muestra el flujo típico desde el navegador hasta la base de datos
 
 ## Proyecto Funcional con Docker
 
-Para demostrar el proyecto de manera práctica, se ha creado una aplicación web funcional desplegada con Docker usando Nginx como servidor web y PHP para el backend dinámico.
+Para demostrar el proyecto de manera práctica, se ha creado una aplicación web funcional desplegada con Docker usando Node.js y Express para el backend dinámico, con EJS como motor de plantillas.
 
 ### Estructura del Proyecto
-- `app/index.php`: Página principal con catálogo interactivo de productos.
-- `nginx/nginx.conf`: Configuración de Nginx para servir PHP.
-- `Dockerfile`: Imagen Docker para la aplicación PHP.
-- `docker-compose.yml`: Orquestación de servicios con Nginx y PHP-FPM.
-- `.dockerignore`: Archivos a ignorar en la construcción de la imagen.
+- `index.js`: Servidor Express que maneja las rutas y lógica.
+- `views/index.ejs`: Plantilla para el catálogo principal.
+- `views/product.ejs`: Plantilla para la vista de producto individual.
+- `public/script.js`: Archivo JavaScript para interactividad del lado cliente.
+- `package.json`: Dependencias de Node.js.
+- `Dockerfile`: Imagen Docker para la aplicación Node.js.
+- `docker-compose.yml`: Orquestación del servicio con Docker.
 
 ### Cómo Ejecutar el Proyecto
 1. Asegúrate de tener Docker y Docker Compose instalados.
@@ -120,8 +122,9 @@ Para demostrar el proyecto de manera práctica, se ha creado una aplicación web
 4. Abre tu navegador y ve a `http://localhost:8080` para ver la página web.
 
 ### Funcionalidades
-- Catálogo de productos con filtrado por categoría.
+- Catálogo de productos con filtrado por categoría (usando query params).
+- Vistas individuales de productos.
 - Interfaz interactiva con JavaScript para añadir productos al carrito (simulado).
-- Servidor Nginx optimizado para rendimiento y seguridad.
+- Servidor Express optimizado para desarrollo web dinámico.
 
-Este setup demuestra la arquitectura cliente-servidor, el uso de Nginx, y el funcionamiento de HTTP en un entorno Dockerizado.
+Este setup demuestra la arquitectura cliente-servidor, el uso de tecnologías modernas como Node.js, y el funcionamiento de HTTP en un entorno Dockerizado.

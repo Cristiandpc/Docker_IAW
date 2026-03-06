@@ -1,13 +1,19 @@
-FROM php:8.1-fpm
+FROM node:18-alpine
 
-# Instalar extensiones necesarias
-RUN docker-php-ext-install pdo pdo_mysql
+# Establecer directorio de trabajo
+WORKDIR /app
 
-# Copiar archivos de la app
-COPY app/ /var/www/html/
+# Copiar package.json y package-lock.json
+COPY package*.json ./
 
-# Cambiar permisos
-RUN chown -R www-data:www-data /var/www/html
+# Instalar dependencias
+RUN npm install
+
+# Copiar el resto del código
+COPY . .
 
 # Exponer puerto
-EXPOSE 9000
+EXPOSE 3000
+
+# Comando para ejecutar la app
+CMD ["npm", "start"]
