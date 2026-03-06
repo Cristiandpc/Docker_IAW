@@ -1,18 +1,20 @@
-# Tienda Reactiva - Arquitectura de Microservicios
+# Tienda Reactiva - Arquitectura de Microservicios con CMS
 
 ## 📋 Descripción
 
-Arquitectura robusta de microservicios para una plataforma de e-commerce con:
+Arquitectura robusta de microservicios para una plataforma de e-commerce completa con:
 
 - ✅ **Frontend Reactivo**: Aplicación React moderna e interactiva
 - ✅ **Microservicios**: Servicios independientes y escalables
+- ✅ **Sistema de Gestión de Contenidos (CMS)**: Strapi para gestión de contenido dinámico
 - ✅ **Base de Datos**: PostgreSQL para persistencia de datos
 - ✅ **Orquestación**: Docker Compose para gestión de servicios
 - ✅ **API Gateway**: Nginx como reverse proxy y enrutador
+- ✅ **Despliegue Cloud**: Configuración para Vercel
 
 ---
 
-## 🏗️ Arquitectura
+## 🏗️ Arquitectura Actualizada
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -27,23 +29,24 @@ Arquitectura robusta de microservicios para una plataforma de e-commerce con:
 │  - Compresión Gzip                                           │
 │  - Headers de Seguridad                                      │
 └──┬──────────────────┬──────────────────┬────────────────────┘
-   │                  │                  │
-   ▼                  ▼                  ▼
- Frontend          Products API       Orders API
- React 3000        Node.js 3001       Node.js 3002
-                      ▲                   ▲
-                      │                   │
-                      └───────────┬───────┘
+   │                  │                  │                  │
+   ▼                  ▼                  ▼                  ▼
+Frontend          Products API       Orders API         CMS API
+React 3000        Node.js 3001       Node.js 3002      Strapi 1337
+                      ▲                   ▲                  ▲
+                      │                   │                  │
+                      └───────────┬───────┼──────────────────┘
                                   │
                                   ▼
                         PostgreSQL (Puerto 5432)
                         - Tabla: products
                         - Tabla: orders
+                        - Tabla: strapi_* (CMS)
 ```
 
 ---
 
-## 📁 Estructura de Directorios
+## 📁 Estructura de Directorios Actualizada
 
 ```
 Docker_IAW/
@@ -53,8 +56,10 @@ Docker_IAW/
 │   │   │   ├── Header.js
 │   │   │   ├── ProductList.js
 │   │   │   ├── ProductCard.js
-│   │   │   └── Cart.js
-│   │   ├── App.js             # Componente principal
+│   │   │   ├── Cart.js
+│   │   │   ├── Banner.js       # Nuevo: Componente de banners
+│   │   │   └── Page.js         # Nuevo: Componente de páginas
+│   │   ├── App.js             # Actualizado con CMS
 │   │   ├── App.css
 │   │   └── index.js
 │   ├── public/index.html
@@ -67,17 +72,36 @@ Docker_IAW/
 │   │   ├── package.json
 │   │   └── Dockerfile
 │   │
-│   └── orders-service/         # Microservicio de Órdenes
-│       ├── server.js
+│   ├── orders-service/         # Microservicio de Órdenes
+│   │   ├── server.js
+│   │   ├── package.json
+│   │   └── Dockerfile
+│   │
+│   └── cms-service/            # Nuevo: Microservicio CMS (Strapi)
+│       ├── src/
+│       │   ├── api/            # APIs de Strapi
+│       │   │   ├── banner/
+│       │   │   ├── product-category/
+│       │   │   └── page/
+│       │   ├── middlewares/
+│       │   └── index.js
+│       ├── config/             # Configuración de Strapi
+│       ├── lib/                # Utilidades
+│       │   ├── sync.js         # Sincronización con productos
+│       │   └── init.js         # Inicialización del CMS
+│       ├── pages/api/          # APIs serverless para Vercel
+│       ├── public/uploads/     # Archivos subidos
 │       ├── package.json
-│       └── Dockerfile
+│       ├── Dockerfile
+│       ├── vercel.json         # Configuración de Vercel
+│       └── README.md
 │
 ├── api-gateway/                # API Gateway (Nginx)
-│   ├── nginx.conf
+│   ├── nginx.conf             # Actualizado con rutas CMS
 │   ├── default.conf
 │   └── Dockerfile
 │
-├── docker-compose.yml          # Orquestación de servicios
+├── docker-compose.yml          # Actualizado con CMS
 ├── .env                        # Variables de entorno
 ├── .env.example               # Plantilla de variables de entorno
 └── README.md                  # Este archivo
@@ -92,6 +116,7 @@ Docker_IAW/
 - Docker 20.10+
 - Docker Compose 2.0+
 - Git
+- Node.js 18+ (para desarrollo local del CMS)
 
 ### Pasos para ejecutar
 
@@ -120,6 +145,7 @@ Docker_IAW/
    - Frontend: http://localhost/
    - API Productos: http://localhost/api/products
    - API Órdenes: http://localhost/api/orders
+   - CMS Admin: http://localhost/api/cms/admin (admin@tienda.com / Admin123!)
    - Healthcheck: http://localhost/health
 
 ---
@@ -131,10 +157,12 @@ Docker_IAW/
 - **Tecnologías**: React 18, Axios
 - **Funcionalidades**:
   - Listado de productos reactivo
-  - Filtrado por categoría
+  - Filtrado por categoría (desde CMS)
   - Carrito de compras
   - Gestión de cantidades
   - Realización de órdenes
+  - **Nuevo**: Banners promocionales desde CMS
+  - **Nuevo**: Páginas estáticas desde CMS
 
 ### 2. Microservicio de Productos
 - **Puerto**: 3001
@@ -167,7 +195,41 @@ DELETE /orders/:id          - Eliminar orden
 GET    /health             - Health check
 ```
 
-### 4. API Gateway (Nginx)
+### 4. Sistema de Gestión de Contenidos (CMS - Strapi)
+- **Puerto**: 1337
+- **Tecnologías**: Strapi 4.15, PostgreSQL
+- **Funcionalidades**:
+  - Gestión de banners promocionales
+  - Categorías de productos dinámicas
+  - Páginas estáticas (Sobre nosotros, Contacto, etc.)
+  - Sincronización automática con productos
+  - API REST completa
+  - Panel de administración web
+
+#### Endpoints del CMS
+```
+# Admin Panel
+GET    /admin                 - Panel de administración
+
+# API Content Types
+GET    /api/banners           - Obtener banners
+GET    /api/product-categories - Obtener categorías
+GET    /api/pages             - Obtener páginas
+
+# Sincronización
+POST   /api/sync/products     - Sincronizar productos
+POST   /api/sync/categories   - Sincronizar categorías
+
+# Health Check
+GET    /_health              - Health check de Strapi
+```
+
+#### Contenido Gestionable
+- **Banners**: Título, descripción, imagen, enlace, orden
+- **Categorías**: Nombre, slug, descripción, imagen
+- **Páginas**: Título, contenido (rich text), imagen, SEO
+
+### 5. API Gateway (Nginx)
 - **Puerto**: 80
 - **Funciones**:
   - Enrutamiento de solicitudes
@@ -175,12 +237,66 @@ GET    /health             - Health check
   - Compresión Gzip
   - CORS headers
   - Headers de seguridad
+  - **Nuevo**: Enrutamiento al CMS
 
-### 5. Base de Datos (PostgreSQL)
+### 6. Base de Datos (PostgreSQL)
 - **Puerto**: 5432
 - **Usuario**: tienda_user
 - **Contraseña**: tienda_pass
 - **Base de datos**: tienda_db
+- **Tablas**:
+  - `products` - Productos del e-commerce
+  - `orders` - Órdenes de compra
+  - `strapi_*` - Tablas del CMS (automáticas)
+
+---
+
+## ☁️ Despliegue en Vercel
+
+### 🧩 Migración a Kubernetes / Nginx dinámico
+
+Si deseas escalar la plataforma hacia un clúster Kubernetes, el directorio
+`k8s/` incluye manifestos para cada servicio (productos, órdenes, frontend,
+CMS y base de datos). Un `Ingress` Nginx gestiona enrutamiento, SSL/TLS (con
+cert-manager) y CORS; además implementa cacheo de activos estáticos para
+asegurar rendimiento en un catálogo de ropa de estilo *streetwear* oscuro y
+premium. Utiliza el módulo `stub_status` para monitorizar salud y rendimiento
+(enlaces, handshakes, protocolos) y configura políticas de renovación automática
+ACME para el inventario de certificados.
+
+Antes de aplicar los manifiestos: crea un `Namespace` (ej. `tienda`), secrets
+para contraseñas/clave JWT y un `PersistentVolumeClaim` para PostgreSQL.
+
+
+
+### Despliegue del CMS
+
+1. **Crear cuenta en Vercel** y conectar tu repositorio
+
+2. **Configurar variables de entorno en Vercel**:
+   ```env
+   DATABASE_URL=postgresql://user:pass@host:port/db
+   ADMIN_JWT_SECRET=tu-jwt-secret
+   API_TOKEN_SALT=tu-api-token-salt
+   TRANSFER_TOKEN_SALT=tu-transfer-token-salt
+   ```
+
+3. **Desplegar desde el directorio `services/cms-service`**:
+   ```bash
+   cd services/cms-service
+   vercel --prod
+   ```
+
+4. **Acceder al CMS**:
+   - Admin Panel: `https://tu-dominio.vercel.app/admin`
+   - API: `https://tu-dominio.vercel.app/api/*`
+
+### Configuración de Producción
+
+- El CMS incluye configuración serverless para Vercel
+- APIs optimizadas para edge computing
+- Sincronización automática con servicios locales
+- Manejo de archivos estáticos en Vercel Blob Storage
 
 ---
 

@@ -79,6 +79,41 @@ services:
       timeout: 5s
       retries: 3
 
+  # Microservicio de CMS (Strapi)
+  cms-service:
+    build: ./services/cms-service
+    container_name: cms_service
+    environment:
+      DATABASE_CLIENT: postgres
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_NAME: tienda_db
+      DATABASE_USERNAME: tienda_user
+      DATABASE_PASSWORD: tienda_pass
+      ADMIN_JWT_SECRET: cms-admin-secret-key-change-in-production
+      API_TOKEN_SALT: cms-api-token-salt-change-in-production
+      TRANSFER_TOKEN_SALT: cms-transfer-token-salt-change-in-production
+      HOST: 0.0.0.0
+      PORT: 1337
+      NODE_ENV: development
+    ports:
+      - "1337:1337"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./services/cms-service:/app
+      - cms_uploads:/app/public/uploads
+      - /app/node_modules
+    networks:
+      - microservices
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:1337/_health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
   # Frontend Reactivo
   frontend:
     build: ./frontend
@@ -88,8 +123,6 @@ services:
       NODE_ENV: production
     ports:
       - "3000:3000"
-    depends_on:
-      - api-gateway
     networks:
       - microservices
     restart: unless-stopped
@@ -128,4 +161,6 @@ networks:
 
 volumes:
   postgres_data:
+    driver: local
+  cms_uploads:
     driver: local

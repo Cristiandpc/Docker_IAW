@@ -4,6 +4,7 @@ import './App.css';
 import ProductList from './components/ProductList';
 import Cart from './components/Cart';
 import Header from './components/Header';
+import Banner from './components/Banner';
 
 function App() {
   const [products, setProducts] = useState([]);
@@ -11,12 +12,29 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [categories, setCategories] = useState([]);
 
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost/api';
 
   useEffect(() => {
+    fetchCategories();
     fetchProducts();
   }, [selectedCategory]);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/cms/api/product-categories`);
+      setCategories(response.data.data || []);
+    } catch (err) {
+      console.error('Error fetching categories:', err);
+      // Fallback to hardcoded categories
+      setCategories([
+        { id: 'electronica', attributes: { name: 'Electrónica', slug: 'electronica' } },
+        { id: 'ropa', attributes: { name: 'Ropa', slug: 'ropa' } },
+        { id: 'hogar', attributes: { name: 'Hogar', slug: 'hogar' } }
+      ]);
+    }
+  };
 
   const fetchProducts = async () => {
     try {
@@ -90,6 +108,8 @@ function App() {
       />
       
       <div className="container">
+        <Banner />
+        
         <div className="categories">
           <button
             className={selectedCategory === 'all' ? 'active' : ''}
@@ -97,24 +117,15 @@ function App() {
           >
             Todos
           </button>
-          <button
-            className={selectedCategory === 'electronica' ? 'active' : ''}
-            onClick={() => setSelectedCategory('electronica')}
-          >
-            Electrónica
-          </button>
-          <button
-            className={selectedCategory === 'ropa' ? 'active' : ''}
-            onClick={() => setSelectedCategory('ropa')}
-          >
-            Ropa
-          </button>
-          <button
-            className={selectedCategory === 'hogar' ? 'active' : ''}
-            onClick={() => setSelectedCategory('hogar')}
-          >
-            Hogar
-          </button>
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              className={selectedCategory === category.attributes.slug ? 'active' : ''}
+              onClick={() => setSelectedCategory(category.attributes.slug)}
+            >
+              {category.attributes.name}
+            </button>
+          ))}
         </div>
 
         <div className="main-content">

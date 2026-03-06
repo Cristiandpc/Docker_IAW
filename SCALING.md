@@ -106,6 +106,44 @@ spec:
   type: ClusterIP
 ```
 
+### Ejemplos Adicionales
+Los demás recursos siguen el mismo patrón; hay manifiestos completos en el
+directorio `k8s/`:
+
+- **cms-deployment.yaml**: despliega Strapi con dos réplicas, variables sensibles
+  en `Secrets` (`cms-secrets`) y un `ClusterIP` para exponer el puerto 1337.
+- **orders-deployment.yaml** y **frontend-deployment.yaml**: con las mismas
+  secciones `Deployment+Service` adaptadas a sus puertos y réplicas.
+- **postgres-deployment.yaml**: incluye un `PersistentVolumeClaim` para los
+  datos y un `Secret` para la contraseña de Postgres.
+
+#### Ingress Nginx y TLS
+El `Ingress` centraliza el tráfico, habilita CORS y configura certificados via
+`cert-manager`. El manifiesto `k8s/ingress.yaml` muestra rutas para `/api/*`
+servicios y el frontend estático. Es aquí donde Nginx actúa como reverse
+proxy dinámico, cacheando contenido estático (imágenes, js/css) y acelerando
+las peticiones del catálogo de streetwear con tema oscuro.
+
+> **Tip**: habilita el módulo `ngx_http_stub_status_module` en el controlador
+> para obtener métricas de salud en tiempo real (handshakes/estadísticas SSL).
+
+### Roles y Autenticación en el CMS
+El inicializador (`lib/init.js`) crea automáticamente los roles básicos:
+`public`, `authenticated`, `editor` y `admin`. Puedes añadir usuarios con curl
+contra `/admin/users` o desde el panel. Esto asegura que la base de datos local
+sea la única fuente de verdad y que el acceso al contenido sea controlado.
+
+```bash
+curl -X POST http://localhost:1337/api/auth/local \
+  -H "Content-Type: application/json" \
+  -d '{"identifier":"editor@tienda.com","password":"Editor123"}'
+```
+
+Configuraciones de Kubernetes como `NetworkPolicy` y `PodSecurityPolicy` pueden
+reforzar la segmentación de la red y el manejo de certificados.
+
+---
+
 ---
 
 ## Optimizaciones de Rendimiento

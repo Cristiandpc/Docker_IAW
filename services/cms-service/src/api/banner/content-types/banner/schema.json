@@ -1,0 +1,40 @@
+// Content Types para la tienda
+module.exports = {
+  kind: 'collectionType',
+  collectionName: 'banners',
+  info: {
+    singularName: 'banner',
+    pluralName: 'banners',
+    displayName: 'Banner',
+    description: 'Banners promocionales de la tienda',
+  },
+  options: {
+    draftAndPublish: true,
+  },
+  pluginOptions: {},
+  attributes: {
+    title: {
+      type: 'string',
+      required: true,
+    },
+    description: {
+      type: 'text',
+    },
+    image: {
+      type: 'media',
+      multiple: false,
+      required: true,
+    },
+    link: {
+      type: 'string',
+    },
+    active: {
+      type: 'boolean',
+      default: true,
+    },
+    order: {
+      type: 'integer',
+      default: 0,
+    },
+  },
+};

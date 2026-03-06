@@ -6,11 +6,13 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #121212;
+  color: #e0e0e0;
 }
 
 .App {
   min-height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #121212;
 }
 
 .container {
@@ -28,9 +30,9 @@ body {
 
 .categories button {
   padding: 10px 20px;
-  border: 2px solid #007bff;
-  background-color: white;
-  color: #007bff;
+  border: 2px solid #555;
+  background-color: #1e1e1e;
+  color: #e0e0e0;
   border-radius: 5px;
   cursor: pointer;
   font-weight: 600;
@@ -43,7 +45,7 @@ body {
 
 .categories button.active {
   background-color: #007bff;
-  color: white;
+  color: #121212;
 }
 
 .main-content {
@@ -73,12 +75,12 @@ body {
   text-align: center;
   padding: 40px;
   font-size: 18px;
-  color: #666;
+  color: #bbb;
 }
 
 .error {
-  background-color: #f8d7da;
-  color: #721c24;
+  background-color: #611a33;
+  color: #f8d7da;
   padding: 12px;
   border-radius: 5px;
   text-align: center;

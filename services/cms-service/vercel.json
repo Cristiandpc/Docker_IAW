@@ -1,0 +1,43 @@
+# Archivo de configuración para Vercel (Serverless)
+
+# Configuración de build
+[build]
+  command = "npm run build"
+  cwd = "."
+
+# Configuración de rutas para API routes
+[functions]
+  src/pages/api/**/*.js = Serverless Function
+
+# Variables de entorno para Vercel
+[env]
+  NODE_ENV = "production"
+  DATABASE_URL = "@database-url"
+  ADMIN_JWT_SECRET = "@admin-jwt-secret"
+  API_TOKEN_SALT = "@api-token-salt"
+  TRANSFER_TOKEN_SALT = "@transfer-token-salt"
+
+# Headers de seguridad
+[headers]
+  # CORS headers
+  "/*" = """
+    Access-Control-Allow-Origin: *
+    Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+    Access-Control-Allow-Headers: Content-Type, Authorization
+  """
+
+  # Security headers
+  "/api/*" = """
+    X-Frame-Options: DENY
+    X-Content-Type-Options: nosniff
+    Referrer-Policy: strict-origin-when-cross-origin
+  """
+
+# Redirects para SPA
+[rewrites]
+  source = "/admin/(.*)"
+  destination = "/admin/index.html"
+
+# Build settings
+[build.environment]
+  NODE_VERSION = "18"

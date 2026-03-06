@@ -1,0 +1,32 @@
+{
+  "name": "cms-service",
+  "version": "1.0.0",
+  "description": "CMS Service con Strapi para gestión de contenido",
+  "private": true,
+  "scripts": {
+    "build": "strapi build",
+    "develop": "strapi develop",
+    "start": "strapi start",
+    "strapi": "strapi"
+  },
+  "dependencies": {
+    "@strapi/strapi": "^4.15.0",
+    "@strapi/plugin-users-permissions": "^4.15.0",
+    "@strapi/plugin-i18n": "^4.15.0",
+    "@strapi/plugin-content-manager": "^4.15.0",
+    "@strapi/plugin-content-type-builder": "^4.15.0",
+    "@strapi/plugin-email": "^4.15.0",
+    "@strapi/plugin-upload": "^4.15.0",
+    "@strapi/provider-upload-local": "^4.15.0",
+    "@strapi/provider-email-nodemailer": "^4.15.0",
+    "pg": "^8.11.0",
+    "better-sqlite3": "^8.7.0"
+  },
+  "strapi": {
+    "uuid": "cms-service-uuid"
+  },
+  "engines": {
+    "node": ">=16.0.0 <=20.x.x",
+    "npm": ">=6.0.0"
+  }
+}
