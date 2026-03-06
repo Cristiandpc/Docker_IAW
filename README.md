@@ -96,3 +96,32 @@ sequenceDiagram
 ```
 
 Este diagrama muestra el flujo típico desde el navegador hasta la base de datos y vuelta.
+
+## Proyecto Funcional con Docker
+
+Para demostrar el proyecto de manera práctica, se ha creado una aplicación web funcional desplegada con Docker usando Nginx como servidor web y PHP para el backend dinámico.
+
+### Estructura del Proyecto
+- `app/index.php`: Página principal con catálogo interactivo de productos.
+- `nginx/nginx.conf`: Configuración de Nginx para servir PHP.
+- `Dockerfile`: Imagen Docker para la aplicación PHP.
+- `docker-compose.yml`: Orquestación de servicios con Nginx y PHP-FPM.
+- `.dockerignore`: Archivos a ignorar en la construcción de la imagen.
+
+### Cómo Ejecutar el Proyecto
+1. Asegúrate de tener Docker y Docker Compose instalados.
+2. Clona o navega al directorio del proyecto.
+3. Ejecuta el siguiente comando para construir y levantar los contenedores:
+
+   ```bash
+   docker-compose up --build
+   ```
+
+4. Abre tu navegador y ve a `http://localhost:8080` para ver la página web.
+
+### Funcionalidades
+- Catálogo de productos con filtrado por categoría.
+- Interfaz interactiva con JavaScript para añadir productos al carrito (simulado).
+- Servidor Nginx optimizado para rendimiento y seguridad.
+
+Este setup demuestra la arquitectura cliente-servidor, el uso de Nginx, y el funcionamiento de HTTP en un entorno Dockerizado.
