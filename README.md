@@ -1,52 +1,301 @@
-# Docker_IAW
-Docker_IAW
-# Proyecto: Asesoramiento para Publicación de Primera Página Web
+# Tienda Reactiva - Arquitectura de Microservicios
 
-## Descripción del Proyecto
+## 📋 Descripción
 
-Como administrador de sistemas, debo asesorar a una empresa local (una tienda que requiere un catálogo interactivo) para publicar su primera página web. El análisis incluye determinar si necesita un sitio estático o dinámico, seleccionar el software de servidor adecuado (Apache, Nginx o IIS), y representar el flujo de una petición HTTP mediante un diagrama.
+Arquitectura robusta de microservicios para una plataforma de e-commerce con:
 
-## 1. Análisis de Arquitectura
+- ✅ **Frontend Reactivo**: Aplicación React moderna e interactiva
+- ✅ **Microservicios**: Servicios independientes y escalables
+- ✅ **Base de Datos**: PostgreSQL para persistencia de datos
+- ✅ **Orquestación**: Docker Compose para gestión de servicios
+- ✅ **API Gateway**: Nginx como reverse proxy y enrutador
 
-El modelo cliente-servidor es fundamental para el funcionamiento de las aplicaciones web. En este modelo:
+---
 
-- **Cliente**: Es el navegador web del usuario (como Chrome, Firefox o Edge) que solicita recursos al servidor.
-- **Servidor**: Es el sistema que recibe las peticiones, procesa la información y envía las respuestas.
+## 🏗️ Arquitectura
 
-Los componentes necesarios para servir una web incluyen:
-- **Servidor Web**: Software que maneja las peticiones HTTP (ej. Nginx, Apache, IIS).
-- **Sistema Operativo**: Plataforma donde se ejecuta el servidor (Linux, Windows, etc.).
-- **Base de Datos** (para sitios dinámicos): Almacena datos como productos, usuarios, etc.
-- **Aplicación Web**: Código que genera contenido dinámico (ej. PHP, Python con Django, Node.js).
-- **Red**: Conexión entre cliente y servidor a través de Internet o intranet.
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Navegador del Usuario                     │
+└────────────┬────────────────────────────────────────────────┘
+             │ HTTP
+             ▼
+┌─────────────────────────────────────────────────────────────┐
+│            API Gateway (Nginx - Puerto 80)                   │
+│  - Reverse Proxy                                             │
+│  - Rate Limiting                                             │
+│  - Compresión Gzip                                           │
+│  - Headers de Seguridad                                      │
+└──┬──────────────────┬──────────────────┬────────────────────┘
+   │                  │                  │
+   ▼                  ▼                  ▼
+ Frontend          Products API       Orders API
+ React 3000        Node.js 3001       Node.js 3002
+                      ▲                   ▲
+                      │                   │
+                      └───────────┬───────┘
+                                  │
+                                  ▼
+                        PostgreSQL (Puerto 5432)
+                        - Tabla: products
+                        - Tabla: orders
+```
 
-Este modelo permite la separación de responsabilidades, escalabilidad y seguridad.
+---
 
-## 2. Tipología de Web
+## 📁 Estructura de Directorios
 
-Para una tienda que requiere un catálogo interactivo, se recomienda un **sitio web dinámico**. Justificación:
+```
+Docker_IAW/
+├── frontend/                    # Frontend React
+│   ├── src/
+│   │   ├── components/         # Componentes React
+│   │   │   ├── Header.js
+│   │   │   ├── ProductList.js
+│   │   │   ├── ProductCard.js
+│   │   │   └── Cart.js
+│   │   ├── App.js             # Componente principal
+│   │   ├── App.css
+│   │   └── index.js
+│   ├── public/index.html
+│   ├── package.json
+│   └── Dockerfile
+│
+├── services/
+│   ├── products-service/       # Microservicio de Productos
+│   │   ├── server.js
+│   │   ├── package.json
+│   │   └── Dockerfile
+│   │
+│   └── orders-service/         # Microservicio de Órdenes
+│       ├── server.js
+│       ├── package.json
+│       └── Dockerfile
+│
+├── api-gateway/                # API Gateway (Nginx)
+│   ├── nginx.conf
+│   ├── default.conf
+│   └── Dockerfile
+│
+├── docker-compose.yml          # Orquestación de servicios
+├── .env                        # Variables de entorno
+├── .env.example               # Plantilla de variables de entorno
+└── README.md                  # Este archivo
+```
 
-- **Interactividad requerida**: Un catálogo interactivo implica funcionalidades como búsqueda de productos, filtros, carritos de compra, formularios de contacto y posiblemente integración con pagos en línea. Un sitio estático solo mostraría páginas HTML fijas sin posibilidad de interacción en tiempo real.
-- **Ventajas del dinámico**: Permite personalización del contenido basado en el usuario, actualización automática de inventarios, y procesamiento de datos en el servidor.
-- **Desventajas consideradas**: Mayor complejidad en desarrollo y mantenimiento, pero necesario para las necesidades del cliente.
+---
 
-Un sitio estático sería insuficiente ya que no soportaría la interactividad necesaria para una experiencia de compra efectiva.
+## 🚀 Inicio Rápido
 
-## 3. Selección Tecnológica
+### Requisitos
 
-Para el servidor web, selecciono **Nginx**. Justificación basada en rendimiento y seguridad:
+- Docker 20.10+
+- Docker Compose 2.0+
+- Git
 
-- **Rendimiento**: Nginx es conocido por su alta eficiencia en el manejo de conexiones concurrentes, utilizando un modelo de eventos asíncronos que consume menos recursos que Apache. Es ideal para sitios con alto tráfico como una tienda en línea.
-- **Seguridad**: Ofrece características avanzadas como protección contra ataques DDoS, configuración de firewalls a nivel de aplicación, y soporte para SSL/TLS con configuraciones seguras. Además, su arquitectura modular permite actualizaciones y parches rápidos.
-- **Comparación con alternativas**:
-  - Apache: Más flexible con módulos, pero consume más memoria y es menos eficiente en alto tráfico.
-  - IIS: Bueno para entornos Windows, pero menos común en servidores web públicos y con menor rendimiento en comparación con Nginx.
+### Pasos para ejecutar
 
-Nginx es la elección óptima para una tienda en línea que prioriza velocidad y seguridad.
+1. **Clonar el repositorio**
+   ```bash
+   git clone <tu-repo>
+   cd Docker_IAW
+   ```
 
-## 4. Funcionamiento del Protocolo
+2. **Crear archivo .env**
+   ```bash
+   cp .env.example .env
+   ```
 
-El protocolo HTTP (HyperText Transfer Protocol) es el estándar para la comunicación web. El proceso funciona así:
+3. **Construir y levantar los servicios**
+   ```bash
+   docker-compose up -d
+   ```
+
+4. **Verificar que todos los servicios estén corriendo**
+   ```bash
+   docker-compose ps
+   ```
+
+5. **Acceder a la aplicación**
+   - Frontend: http://localhost/
+   - API Productos: http://localhost/api/products
+   - API Órdenes: http://localhost/api/orders
+   - Healthcheck: http://localhost/health
+
+---
+
+## 🛠️ Servicios
+
+### 1. Frontend (React)
+- **Puerto**: 3000
+- **Tecnologías**: React 18, Axios
+- **Funcionalidades**:
+  - Listado de productos reactivo
+  - Filtrado por categoría
+  - Carrito de compras
+  - Gestión de cantidades
+  - Realización de órdenes
+
+### 2. Microservicio de Productos
+- **Puerto**: 3001
+- **Tecnologías**: Express.js, PostgreSQL
+- **BD**: Tabla `products`
+
+#### Endpoints de Productos
+```
+GET    /products              - Obtener todos los productos
+GET    /products?category=... - Filtrar por categoría
+GET    /products/:id          - Obtener producto por ID
+POST   /products              - Crear nuevo producto
+PUT    /products/:id          - Actualizar producto
+DELETE /products/:id          - Eliminar producto
+GET    /health               - Health check
+```
+
+### 3. Microservicio de Órdenes
+- **Puerto**: 3002
+- **Tecnologías**: Express.js, PostgreSQL, UUID
+- **BD**: Tabla `orders`
+
+#### Endpoints de Órdenes
+```
+GET    /orders              - Obtener todas las órdenes
+GET    /orders/:id          - Obtener orden por ID o número
+POST   /orders              - Crear nueva orden
+PUT    /orders/:id          - Actualizar estado de orden
+DELETE /orders/:id          - Eliminar orden
+GET    /health             - Health check
+```
+
+### 4. API Gateway (Nginx)
+- **Puerto**: 80
+- **Funciones**:
+  - Enrutamiento de solicitudes
+  - Rate limiting (10 req/s general, 30 req/s API)
+  - Compresión Gzip
+  - CORS headers
+  - Headers de seguridad
+
+### 5. Base de Datos (PostgreSQL)
+- **Puerto**: 5432
+- **Usuario**: tienda_user
+- **Contraseña**: tienda_pass
+- **Base de datos**: tienda_db
+
+---
+
+## 📝 Comandos Docker Compose
+
+### Gestión básica
+```bash
+# Levantar todos los servicios
+docker-compose up -d
+
+# Ver estado de los servicios
+docker-compose ps
+
+# Ver logs de todos los servicios
+docker-compose logs -f
+
+# Ver logs de un servicio específico
+docker-compose logs -f products-service
+
+# Detener todos los servicios
+docker-compose down
+
+# Detener y eliminar volúmenes (CUIDADO: elimina datos)
+docker-compose down -v
+```
+
+### Reconstrucción
+```bash
+# Reconstruir imágenes
+docker-compose build
+
+# Reconstruir un servicio específico
+docker-compose build products-service
+
+# Reconstruir y reiniciar
+docker-compose up -d --build
+```
+
+### Acceso a contenedores
+```bash
+# Entrar en un contenedor
+docker-compose exec products-service sh
+
+# Ejecutar comando en un contenedor
+docker-compose exec db psql -U tienda_user -d tienda_db
+```
+
+---
+
+## 🧪 Testing
+
+### Pruebas manuales con cURL
+
+**Obtener productos**
+```bash
+curl http://localhost/api/products
+```
+
+**Filtrar por categoría**
+```bash
+curl http://localhost/api/products?category=electronica
+```
+
+**Crear orden**
+```bash
+curl -X POST http://localhost/api/orders \
+  -H "Content-Type: application/json" \
+  -d '{
+    "items": [{"id": 1, "name": "Smartphone", "price": 300, "quantity": 2}],
+    "total": 600
+  }'
+```
+
+---
+
+## 🐛 Troubleshooting
+
+### Los servicios no inician
+```bash
+# Verificar logs
+docker-compose logs -f
+
+# Reconstruir todo
+docker-compose down -v
+docker-compose build --no-cache
+docker-compose up -d
+```
+
+### Base de datos no responde
+```bash
+# Verificar que la BD está corriendo
+docker-compose ps db
+
+# Conectarse directamente a la BD
+docker-compose exec db psql -U tienda_user -d tienda_db
+
+# Ver logs de BD
+docker-compose logs db
+```
+
+### Frontend no conecta con API
+1. Verificar que el API Gateway está corriendo: `docker-compose ps api-gateway`
+2. Verificar variable de entorno: `REACT_APP_API_URL`
+3. Revisar logs de Nginx: `docker-compose logs api-gateway`
+
+---
+
+## 📚 Recursos Útiles
+
+- [Docker Documentation](https://docs.docker.com/)
+- [Docker Compose Documentation](https://docs.docker.com/compose/)
+- [Express.js Guide](https://expressjs.com/)
+- [React Documentation](https://react.dev/)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
+- [Nginx Documentation](https://nginx.org/en/docs/)
 
 1. **Petición del Cliente**: El navegador envía una petición HTTP (GET, POST, etc.) al servidor, incluyendo la URL, headers (como User-Agent, Accept-Language) y posiblemente un body con datos.
 2. **Recepción en el Servidor**: El servidor web (Nginx) recibe la petición en el puerto 80 (HTTP) o 443 (HTTPS). Parsea la petición y determina qué recurso se solicita.
